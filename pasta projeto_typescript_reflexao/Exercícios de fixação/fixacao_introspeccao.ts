@@ -8,8 +8,9 @@ class IntrospeccaoAluno {
         this.idade = idade;
         this.nota = nota;
     }
+}
 
-    const a = new IntrospeccaoAluno("Joana", 14, 7.0);
+const a = new IntrospeccaoAluno("Joana", 14, 7.0);
 
 console.log(a.constructor.name);
 console.log(Object.keys(a));
