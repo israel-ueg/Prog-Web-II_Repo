@@ -1,0 +1,12 @@
+packages:
+  - apps/*
+  - packages/*
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - '@scarf/scarf'
+  - bcrypt
+  - esbuild
+  - lmdb
+  - msgpackr-extract
+  - sqlite3
+  - unrs-resolver
