@@ -1,0 +1,41 @@
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+import { AuthResponseDto, LoginDto, RegisterDto } from '@luthiers/utils';
+import { environment } from '../../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AuthService {
+  private http = inject(HttpClient);
+
+  // Token JWT mantido estritamente em memória via Signal
+  readonly jwtToken = signal<string | null>(null);
+  readonly currentUser = signal<AuthResponseDto['usuario'] | null>(null);
+  readonly isAdmin = computed(() => this.currentUser()?.role === 'admin');
+  readonly isLuthier = computed(() => this.currentUser()?.role === 'luthier' || this.currentUser()?.role === 'admin');
+
+  login(credentials: LoginDto): Observable<AuthResponseDto> {
+    return this.http.post<AuthResponseDto>(`${environment.apiUrl}/auth/login`, credentials).pipe(
+      tap(response => {
+        this.jwtToken.set(response.accessToken);
+        this.currentUser.set(response.usuario);
+      })
+    );
+  }
+
+  register(data: RegisterDto): Observable<AuthResponseDto> {
+    return this.http.post<AuthResponseDto>(`${environment.apiUrl}/auth/register`, data).pipe(
+      tap(response => {
+        this.jwtToken.set(response.accessToken);
+        this.currentUser.set(response.usuario);
+      })
+    );
+  }
+
+  logout(): void {
+    this.jwtToken.set(null);
+    this.currentUser.set(null);
+  }
+}
